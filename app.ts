@@ -1,10 +1,16 @@
-function add(n1: number, n2: number) {
-    console.log(typeof n1)
-    return n1 + n2;
+let userInput: unknown;
+let userName: string;
+
+userInput = 5;
+userInput = 'Max';
+if (typeof userInput === 'string') {
+  userName = userInput;
 }
 
-const number1 = 5;
-const number2 = 2.8;
+function generateError(message: string, code: number) {
+  throw { message: message, errorCode: code };
+  // returns nothing at all
+}
 
-const result = add(number1, number2);
-console.log(result);
+console.log(generateError('An error occurred!', 500));
+// doesn't return undefined, just throws an error and "cancels" the script
