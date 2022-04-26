@@ -1,10 +1,25 @@
 "use strict";
-const userName = "Ellie";
-let age = 30;
-age = 29;
-function add(a, b) {
-    var result;
-    result = a + b;
-    return result;
+let add;
+add = (n1, n2) => {
+    return n1 + n2;
+};
+class Person {
+    constructor(name) {
+        this.name = name;
+        if (name) {
+            this.name = name;
+        }
+    }
+    greet(phrase) {
+        if (this.name) {
+            console.log(`${phrase} ${this.name}`);
+        }
+        else {
+            console.log("Hi");
+        }
+    }
 }
-add(1, 2);
+let user1;
+// user1 = new Person("Ellie");
+user1 = new Person();
+user1.greet("Hi there, I am");
