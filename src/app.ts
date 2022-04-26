@@ -1,7 +1,13 @@
-const button = document.querySelector('button')!;
+const userName = "Ellie";
 
-function clickHandler(message: string, age: number) {
-  console.log('Clicked' + message);
+let age = 30;
+
+age = 29;
+
+function add(a: number, b: number) {
+  var result;
+  result = a + b;
+  return result;
 }
 
-button.addEventListener('click', clickHandler.bind(null, 'Hi', 10));
+add(1, 2)

@@ -1,6 +1,10 @@
 "use strict";
-const button = document.querySelector('button');
-function clickHandler(message, age) {
-    console.log('Clicked' + message);
+const userName = "Ellie";
+let age = 30;
+age = 29;
+function add(a, b) {
+    var result;
+    result = a + b;
+    return result;
 }
-button.addEventListener('click', clickHandler.bind(null, 'Hi', 10));
+add(1, 2);
