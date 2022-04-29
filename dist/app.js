@@ -1,62 +1,180 @@
 "use strict";
-// const names: Array<string> = ["adf"];
-// names[0].split('');
+// function Logger(logString: string) {
+//   console.log("LOGGER FACTORY");
+//   return function(constructor: Function) {
+//     console.log(logString);
+//     console.log(constructor);
+//   };
+// }
 //
-// const promise: Promise<string> = new Promise((resolve, reject) => {
-//   setTimeout(() => {
-//     resolve("SHITS DONE");
-//   }, 1000);
-// })
+// function WithTemplate(template: string, hookId: string) {
+//   console.log("TEMPLATE FACTORY");
+//   return function <T extends { new(...args: any[]): { name: string } }>(
+//     originalConstructor: T
+//   ) {
+//     console.log("Rendering template");
 //
-// promise.then(data => {
-//   data.split(' ');
-// })
-function merge(objA, objB) {
-    return Object.assign(objA, objB);
+//     return class extends originalConstructor {
+//       constructor(..._: any[]) {
+//         super();
+//         const hookElement = document.getElementById(hookId);
+//         if (hookElement) {
+//           hookElement.innerHTML = template;
+//           hookElement.querySelector("h1")!.textContent = this.name;
+//         }
+//       }
+//     };
+//   }
+//     ;
+// };
+//
+// @Logger("LOGGING")
+// @WithTemplate("<h1>My Person Object</h1>", "app")
+// class Person {
+//   name = "Max";
+//
+//   constructor() {
+//     console.log("Creating person object...");
+//   }
+// }
+//
+// const pers = new Person();
+// console.log(pers);
+//
+// function Log(target: any, propertyName: string | Symbol) {
+//   console.log("Property decorator");
+//   console.log(target, propertyName);
+// }
+//
+// function Log2(target: any, name: string, descriptor: PropertyDescriptor): PropertyDescriptor {
+//   console.log("Accessor Decorator");
+//   console.log(target);
+//   console.log(name);
+//   console.log(descriptor);
+//   return {};
+// }
+//
+// function Log3(target: any, name: string | Symbol, descriptor: PropertyDescriptor) {
+//   console.log("METHOD Decorator");
+//   console.log(target);
+//   console.log(name);
+//   console.log(descriptor);
+// }
+//
+// function Log4(target: any, name: string | Symbol, position: number) {
+//   console.log("Parameter decorator");
+//   console.log(target);
+//   console.log(name);
+//   console.log(position);
+// }
+//
+// class Product {
+//   @Log
+//   public title: string;
+//
+//   @Log2
+//   set price(val: number) {
+//     if (val > 0) {
+//       this._price = val;
+//     } else {
+//       throw new Error("Invalid Price - should be negative!");
+//     }
+//   }
+//
+//   constructor(t: string, private _price: number) {
+//     this.title = t;
+//   }
+//
+//   @Log3
+//   getPriceWithTax(@Log4 tax: number) {
+//     return this._price * (1 + tax);
+//   }
+// }
+//
+// const p1 = new Product("Book", 19);
+// const p2 = new Product("Book 2", 29);
+//
+// function AutoBind(_: any, _2: string, descriptor: PropertyDescriptor) {
+//   const originalMethod = descriptor.value;
+//   const adjustedDescriptor: PropertyDescriptor = {
+//     configurable: true,
+//     enumerable: false,
+//     get() {
+//       return originalMethod.bind(this);
+//     }
+//   };
+//   return adjustedDescriptor;
+// }
+//
+// class Printer {
+//   message = "This works";
+//
+//   @AutoBind
+//   showMessage() {
+//     console.log(this.message);
+//   }
+// }
+//
+// const p = new Printer();
+//
+// const button = document.querySelector("button")!;
+// button.addEventListener("click", p.showMessage);
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+const registeredValidators = {};
+function Required(target, propName) {
+    registeredValidators[target.constructor.name] = Object.assign(Object.assign({}, registeredValidators[target.constructor.name]), { [propName]: ["required"] });
 }
-const mergedObj = merge({ name: "Ellie", hobbies: ["sleep"] }, { age: 36 });
-console.log(mergedObj.age);
-function countAndDescribe(element) {
-    let descriptionText = "Got no value.";
-    if (element.length === 1) {
-        descriptionText = `Got 1 element.`;
-    }
-    else if (element.length > 1) {
-        descriptionText = `Got ${element.length} elements.`;
-    }
-    return [element, descriptionText];
+function PositiveNumber(target, propName) {
+    registeredValidators[target.constructor.name] = Object.assign(Object.assign({}, registeredValidators[target.constructor.name]), { [propName]: ["positive"] });
 }
-console.log(countAndDescribe(["sports", "cooking"]));
-function extractAndConvert(obj, key) {
-    return obj[key];
+function validate(obj) {
+    const objectValidatorConfig = registeredValidators[obj.constructor.name];
+    if (!objectValidatorConfig) {
+        return true;
+    }
+    let isValid = true;
+    for (const prop in objectValidatorConfig) {
+        console.log(prop);
+        for (const validator of objectValidatorConfig[prop]) {
+            switch (validator) {
+                case "required":
+                    isValid = isValid && !!obj[prop];
+                    break;
+                case "positive":
+                    isValid = isValid && obj[prop] > 0;
+            }
+        }
+    }
+    return isValid;
 }
-extractAndConvert({ name: "hi" }, "name");
-class DataStorage {
-    constructor() {
-        this.data = [];
-    }
-    addItem(item) {
-        this.data.push(item);
-    }
-    removeItem(item) {
-        this.data.splice(this.data.indexOf(item), 1);
-    }
-    getItems() {
-        return [...this.data];
+class Course {
+    constructor(t, p) {
+        this.title = t;
+        this.price = p;
     }
 }
-const textStorage = new DataStorage();
-textStorage.addItem("Max");
-textStorage.addItem("Manu");
-textStorage.removeItem("Max");
-console.log(textStorage);
-const numberStorage = new DataStorage();
-function createCourseGoal(title, description, date) {
-    let courseGoal = {};
-    courseGoal.title = title;
-    courseGoal.description = description;
-    courseGoal.completeUntil = date;
-    return courseGoal;
-}
-const names = ["max", "anna"];
-// names.push("manu")
+__decorate([
+    Required
+], Course.prototype, "title", void 0);
+__decorate([
+    PositiveNumber
+], Course.prototype, "price", void 0);
+const courseForm = document.querySelector("form");
+courseForm.addEventListener("submit", event => {
+    event.preventDefault();
+    const titleEl = document.getElementById("title");
+    const priceEl = document.getElementById("price");
+    const title = titleEl.value;
+    const price = +priceEl.value;
+    const createdCourse = new Course(title, price);
+    if (!validate(createdCourse)) {
+        alert("Invalid");
+        return;
+    }
+    console.log(createdCourse);
+});
